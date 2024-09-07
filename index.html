@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Previsão do Tempo</title>
+</head>
+
+<body>
+    <button onclick="fetchDadosTempo()">Mostrar Previsão do Tempo</button>
+
+    <script>
+        function fetchDadosTempo() {
+            fetch('https://api.open-meteo.com/v1/forecast?latitude=-9.6658&longitude=-35.7353&hourly=temperature_2m&timezone=America%2FSao_Paulo')
+                .then(response => response.json())
+                .then(data => {
+                    const temperaturas = data.hourly.temperature_2m;
+                    const horas = data.hourly.time;
+                    criaTabela(horas, temperaturas);
+                })
+                .catch(error => console.error('Erro ao buscar dados da API:', error));
+        }
+
+        function criaTabela(horas, temperaturas) {
+
+            let table = document.createElement('table');
+            let headerRow = document.createElement('tr');
+
+            let headers = ['Hora', 'Temperatura (°C)'];
+            headers.forEach(headerText => {
+                let header = document.createElement('th');
+                header.textContent = headerText;
+                headerRow.appendChild(header);
+            });
+
+            table.appendChild(headerRow);
+
+            horas.forEach((hora, index) => {
+                let row = document.createElement('tr');
+                
+                let cellHora = document.createElement('td');
+                cellHora.textContent = hora;
+                row.appendChild(cellHora);
+
+                let cellTemp = document.createElement('td');
+                cellTemp.textContent = temperaturas[index];
+                row.appendChild(cellTemp);
+
+                table.appendChild(row);
+            });
+
+            document.body.appendChild(table);
+        }
+    </script>
+</body>
+
+</html>
